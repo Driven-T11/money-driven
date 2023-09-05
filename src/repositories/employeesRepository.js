@@ -16,8 +16,8 @@ async function findAll() {
 }
 
 async function findById(id) {
-  const result = await connection.query("SELECT * FROM employees WHERE id=$1;", [id]);
-  return result.rows[0];
+    const result = await connection.query("SELECT * FROM employees WHERE id=$1;", [id]);
+    return result.rows[0];
 }
 
 async function update(id, payload) {

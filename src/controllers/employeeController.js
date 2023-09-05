@@ -38,8 +38,19 @@ export async function getEmployeeNetSalaryWithTaxes(req, res) {
   try {
     const employee = await employeeService.getEmployeeNetSalaryWithTaxes(id)
     res.send(employee)
+
+    
   } catch (error) {
     console.log(error);
+
+    if (error.type === "notFound") {
+      return res.status(httpStatus.NOT_FOUND).send(error.message)
+    }
+
+    if (error.type === "conflict") {
+      return res.status(httpStatus.CONFLICT).send(error.message)
+    }
+    
     return res.sendStatus(500);
   }
 }
