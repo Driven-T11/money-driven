@@ -1,5 +1,7 @@
 import dayjs from "dayjs";
 import { employeesRepository } from "../repositories/employeesRepository.js";
+import { employeeService } from "../services/employeeService.js";
+import httpStatus from "http-status";
 
 function formatEmployee(employee) {
   const birthDate = dayjs(employee.birthDate).format("DD/MM/YYYY");
@@ -21,10 +23,21 @@ export async function getEmployee(req, res) {
   const { id } = req.params;
 
   try {
-    const employee = await employeesRepository.findById(id);
-    if (!employee) return res.sendStatus(404);
+    const employee = await employeeService.findEmployee(id);
+    if (!employee) return res.sendStatus(httpStatus.NOT_FOUND);
 
     res.send(formatEmployee(employee));
+  } catch (error) {
+    console.log(error);
+    return res.sendStatus(httpStatus.INTERNAL_SERVER_ERROR);
+  }
+}
+
+export async function getEmployeeNetSalaryWithTaxes(req, res) {
+  const { id } = req.params;
+  try {
+    const employee = await employeeService.getEmployeeNetSalaryWithTaxes(id)
+    res.send(employee)
   } catch (error) {
     console.log(error);
     return res.sendStatus(500);
@@ -51,7 +64,7 @@ export async function updateEmployee(req, res) {
 
   try {
     const formattedEmployee = { ...employee };
-    
+
     if (formattedEmployee.grossSalary) {
       formattedEmployee.grossSalary = formattedEmployee.grossSalary * 100;
     }
